@@ -1,8 +1,24 @@
-const express = require('express');
-const productController = require('./product.controller');
+import express from "express";
+
+import productController from "./product.controller.js";
+import productValidation from "./product.validation.js";
+import validate from "../../middlewares/validation.middleware.js";
 
 const router = express.Router();
 
-router.get('/', productController.getProducts);
+// Create Product
+router.post("/", productValidation.createProductValidation, validate, productController.createProduct);
 
-module.exports = router;
+// Get All Products
+router.get("/", productValidation.getProductsValidation, validate, productController.getProducts);
+
+// Get Single Product
+router.get("/:id", productValidation.productIdValidation, validate, productController.getProduct);
+
+// Update Product
+router.patch("/:id", productValidation.updateProductValidation, validate, productController.updateProduct);
+
+// Delete Product
+router.delete("/:id", productValidation.productIdValidation, validate, productController.deleteProduct)
+
+export default router;
