@@ -1,12 +1,12 @@
 import { mongoose } from "mongoose";
 
-const categorySchema = new mongoose.Schema({
+const collectionSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
-    slug: { type: String, required: true, unique: true, trim: true },
+    description: { type: String, required: true, trim: true },
     image: { type: String, required: true },
     isPublished: { type: Boolean, default: true },
 }, { timestamps: true });
 
-const Category = mongoose.model('Category', categorySchema);
+const Collection = mongoose.model('Collection', collectionSchema);
 
-export default Category;
+export default Collection;

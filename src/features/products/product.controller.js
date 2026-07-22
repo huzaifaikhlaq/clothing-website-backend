@@ -2,12 +2,24 @@ import productService from "./product.service.js"
 
 const createProduct = async (req, res) => {
     try {
+        console.log(req.body);
+
         const product = await productService.createProduct(req.body);
 
-        res.status(201).json({ message: "Product created successfully", product });
+        res.status(201).json({
+            message: "Product created successfully",
+            product
+        });
 
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error("========== CREATE PRODUCT ERROR ==========");
+        console.error(error);
+        console.error("Message:", error.message);
+        console.error("Stack:", error.stack);
+
+        return res.status(500).json({
+            message: error.message,
+        });
     }
 }
 
