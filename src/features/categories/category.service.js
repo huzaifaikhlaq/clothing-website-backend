@@ -1,7 +1,13 @@
-class CategoryService {
-    async getCategories() {
-        return { message: 'Category service placeholder' };
-    }
+import Category from "./category.model.js";
+
+const createCategory = async (categoryData) => {
+    const category = await Category.create(categoryData);
+    return category;
 }
 
-module.exports = new CategoryService();
+const getAllCategories = async () => {
+    const categories = await Category.find({ isPublished: true });
+    return categories;
+}
+
+export default { createCategory , getAllCategories };

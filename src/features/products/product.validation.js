@@ -59,10 +59,25 @@ const createProductValidation = [
         .withMessage("imagess is required"),
 
     body("colors")
+        .customSanitizer(value => {
+            try {
+                return JSON.parse(value);
+            } catch {
+                return value;
+            }
+        })
         .isArray({ min: 1 })
         .withMessage("Select at least one color"),
 
+
     body("sizes")
+        .customSanitizer(value => {
+            try {
+                return JSON.parse(value);
+            } catch {
+                return value;
+            }
+        })
         .isArray({ min: 1 })
         .withMessage("Select at least one size"),
 
@@ -141,11 +156,25 @@ const updateProductValidation = [
 
     body("colors")
         .optional()
+        .customSanitizer(value => {
+            try {
+                return JSON.parse(value);
+            } catch {
+                return value;
+            }
+        })
         .isArray({ min: 1 })
         .withMessage("Select at least one color"),
 
     body("sizes")
         .optional()
+        .customSanitizer(value => {
+            try {
+                return JSON.parse(value);
+            } catch {
+                return value;
+            }
+        })
         .isArray({ min: 1 })
         .withMessage("Select at least one size"),
 
