@@ -2,7 +2,6 @@ import productService from "./product.service.js"
 
 const createProduct = async (req, res) => {
     try {
-        console.log(req.body);
 
         const product = await productService.createProduct(req.body);
 

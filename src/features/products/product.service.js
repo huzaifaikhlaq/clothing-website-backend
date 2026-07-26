@@ -11,7 +11,7 @@ const createProduct = async (productData) => {
 }
 
 const getProducts = async (filters = {}, options = {}) => {
-    const { search, category, gender, badge, sort = "-createdAt", page = 1, limit = 8, } = options;
+    const { search, category, gender, badge, sort = "-createdAt", page, limit, } = options;
     const query = { ...filters };
 
     if (search) {
@@ -68,7 +68,7 @@ const updateProduct = async (id, updateData) => {
             _id: { $ne: id },
         });
 
-        if (product) {
+        if (existingProduct) {
             throw new Error("Product with the same SKU already exists");
         }
     }
