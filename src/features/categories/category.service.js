@@ -10,4 +10,19 @@ const getAllCategories = async () => {
     return categories;
 }
 
-export default { createCategory , getAllCategories };
+const getCategoriesById = async (id) => {
+    const category = await Category.findById(id);
+    return category;
+}
+
+const updateCategory = async (id, updateData) => {
+    const category = await Category.findByIdAndUpdate(id, updateData, { new: true });
+    return category;
+}
+
+const deleteCategory = async (id) => {
+    const category = await Category.findByIdAndDelete(id);
+    return category;
+}
+
+export default { createCategory, getAllCategories, getCategoriesById, updateCategory, deleteCategory };

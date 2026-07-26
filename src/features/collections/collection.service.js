@@ -10,4 +10,19 @@ const getAllCollections = async () => {
     return collections;
 };
 
-export default { createCollection, getAllCollections };
+const getCollectionById = async (id) => {
+    const collection = await Collection.findById(id);
+    return collection;
+};
+
+const updateCollection = async (id, updateData) => {
+    const collection = await Collection.findByIdAndUpdate(id, updateData, { new: true });
+    return collection;
+};
+
+const deleteCollection = async (id) => {
+    const collection = await Collection.findByIdAndDelete(id);
+    return collection;
+};
+
+export default { createCollection, getAllCollections, getCollectionById, updateCollection, deleteCollection };

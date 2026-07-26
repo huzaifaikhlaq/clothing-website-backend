@@ -36,7 +36,7 @@ const createProductValidation = [
         .withMessage("Stock must be a positive integer"),
 
     body("gender")
-        .isIn(["men", "female"])
+        .isIn(['men', 'female','junior','unisex'])
         .withMessage("Invalid gender"),
 
     body("category")
@@ -51,7 +51,7 @@ const createProductValidation = [
 
     body("badge")
         .optional()
-        .isIn(["new", "hot", "sale"])
+        .isIn(["new", "hot", "sale","coming soon"])
         .withMessage("Invalid badge"),
 
     body("images")
@@ -129,7 +129,7 @@ const updateProductValidation = [
 
     body("gender")
         .optional()
-        .isIn(["men", "female"])
+        .isIn(['men', 'female','junior','unisex'])
         .withMessage("Invalid gender"),
 
     body("category")
@@ -146,7 +146,7 @@ const updateProductValidation = [
 
     body("badge")
         .optional()
-        .isIn(["new", "hot", "sale"])
+        .isIn(["new", "hot", "sale","coming soon"])
         .withMessage("Invalid badge"),
 
     body("images")
@@ -207,12 +207,12 @@ const getProductsValidation = [
 
     query("gender")
         .optional()
-        .isIn(["men", "female"])
+        .isIn(['men', 'female','junior','unisex'])
         .withMessage("Invalid gender"),
 
     query("badge")
         .optional()
-        .isIn(["new", "hot", "sale"])
+        .isIn(["new", "hot", "sale","coming soon"])
         .withMessage("Invalid badge"),
 ];
 

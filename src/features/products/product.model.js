@@ -11,13 +11,13 @@ const ProductSchema = new mongoose.Schema({
 
     stock: { type: Number, default: 0 },
 
-    gender: { type: String, enum: ['men', 'female'], required: true },
+    gender: { type: String, enum: ['men', 'female', 'junior', 'unisex'], required: true },
 
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
 
     collection: { type: mongoose.Schema.Types.ObjectId, ref: 'Collection', required: true },
 
-    badge: { type: String, enum: ['new', 'hot', 'sale'], default: 'new' },
+    badge: { type: String, enum: ['new', 'hot', 'sale', 'coming soon'], default: 'new' },
 
     images: [{ type: String, required: true }],
 
