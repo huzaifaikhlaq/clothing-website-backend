@@ -2,24 +2,22 @@ import express from "express";
 
 import productController from "./product.controller.js";
 import productValidation from "./product.validation.js";
-import validate from "../../middlewares/validation.middleware.js";
-// import upload from "../../middlewares/upload.middleware.js";
 
 const router = express.Router();
 
 // Create Product
-router.post("/", productValidation.createProductValidation, validate, productController.createProduct);
+router.post("/", productValidation.createProductValidation,  productController.createProduct);
 
 // Get All Products
-router.get("/", productValidation.getProductsValidation, validate, productController.getProducts);
+router.get("/", productValidation.getProductsValidation,  productController.getProducts);
 
 // Get Single Product
-router.get("/:id", productValidation.productIdValidation, validate, productController.getProduct);
+router.get("/:id", productValidation.productIdValidation,  productController.getProduct);
 
 // Update Product
-router.patch("/:id", productValidation.updateProductValidation, validate, productController.updateProduct);
+router.patch("/:id", productValidation.updateProductValidation,  productController.updateProduct);
 
 // Delete Product
-router.delete("/:id", productValidation.productIdValidation, validate, productController.deleteProduct)
+router.delete("/:id", productValidation.productIdValidation,  productController.deleteProduct)
 
 export default router;
