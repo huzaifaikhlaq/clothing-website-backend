@@ -7,6 +7,10 @@ const createProduct = async (productData) => {
         throw new Error("Product with the same SKU already exists");
     }
 
+    if (productData.salePrice === 0 || productData.salePrice === "") {
+        productData.salePrice = null;
+    }
+
     return await Product.create(productData);;
 }
 
@@ -71,6 +75,10 @@ const updateProduct = async (id, updateData) => {
         if (existingProduct) {
             throw new Error("Product with the same SKU already exists");
         }
+    }
+    
+    if (updateData.salePrice === 0 || updateData.salePrice === "") {
+        updateData.salePrice = null;
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, {

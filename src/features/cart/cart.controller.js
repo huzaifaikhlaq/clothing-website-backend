@@ -59,7 +59,9 @@ export const removeCartItemController = async (req, res) => {
 export const clearCartController = async (req, res) => {
     try {
         const userId = req.user ? req.user.id : req.body.user;
-
+        if (!userId) {
+            return res.status(401).json({ message: "User not authenticated" });
+        }
         const cart = await clearCart(userId);
 
         return res.status(200).json({ message: "Cart cleared successfully", cart });
