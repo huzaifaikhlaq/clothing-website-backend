@@ -1,3 +1,49 @@
-exports.getOrders = (req, res) => {
-    res.status(200).json({ message: 'Orders route placeholder' });
+import { createOrder, getUserOrders, getOrder } from "./order.service.js";
+
+export const createOrderController = async (req, res) => {
+    try {
+        const order = await createOrder({
+            ...req.body,
+            user: req.user.id,
+        });
+
+        return res.status(201).json({
+            message: "Order created successfully",
+            order,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
 };
+
+export const getUserOrdersController = async (req, res) => {
+    try {
+        const orders = await getUserOrders(req.user.id);
+
+        return res.status(200).json({
+            message: "Orders fetched successfully",
+            orders,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        })
+    }
+}
+
+export const getOrderController = async (req, res) => {
+    try {
+        const order = await getOrder(req.params.id, req.user.id);
+
+        return res.status(200).json({
+            message: "Order fetched successfully",
+            order,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        })
+    }
+}
