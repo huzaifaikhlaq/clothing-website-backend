@@ -42,3 +42,16 @@ export const getUserOrders = async (userId) => {
 export const getOrder = async (orderId, userId) => {
     return await Order.findById({ _id: orderId, user: userId }).populate("items.product", "title price salePrice images stock");
 }
+
+
+export const getAllOrders = async () => {
+    return await Order.find().populate('user', 'name email');
+};
+
+export const updateOrderStatus = async (orderId, status) => {
+    return await Order.findByIdAndUpdate(
+        orderId,
+        { status },
+        { new: true, runValidators: true }
+    );
+};
