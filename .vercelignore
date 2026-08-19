@@ -1,0 +1,14 @@
+node_modules
+.env
+.env.*
+.git
+.gitignore
+.vercel
+*.log
+coverage
+*.test.js
+*.spec.js
+README.md
+.vscode
+.idea
+.DS_Store

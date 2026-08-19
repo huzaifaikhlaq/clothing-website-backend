@@ -1,13 +1,29 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const connectDB = async () => {
-    try {
-        const conn = await (mongoose.connect(process.env.MONGO_URL));
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-    } catch (error) {
-        console.log(error.message);
-        process.exit(1);
+let connectionPromise;
+
+const connectDB = () => {
+    if (mongoose.connection.readyState === 1) {
+        return Promise.resolve(mongoose.connection);
     }
+
+    if (!connectionPromise) {
+        connectionPromise = mongoose
+            .connect(process.env.MONGO_URL)
+            .then((mongooseInstance) => {
+                console.log(
+                    `MongoDB Connected: ${mongooseInstance.connection.host}`
+                );
+
+                return mongooseInstance.connection;
+            })
+            .catch((error) => {
+                connectionPromise = undefined;
+                throw error;
+            });
+    }
+
+    return connectionPromise;
 };
 
 export default connectDB;
