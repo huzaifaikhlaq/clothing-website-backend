@@ -4,6 +4,7 @@ let connectionPromise;
 
 const connectDB = () => {
     if (mongoose.connection.readyState === 1) {
+        console.log(`MongoDB Connected:  ${mongoose.connection.host}`);
         return Promise.resolve(mongoose.connection);
     }
 

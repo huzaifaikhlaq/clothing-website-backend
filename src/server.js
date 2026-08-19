@@ -5,8 +5,17 @@ import connectDB from "./config/db.js";
 
 const PORT = process.env.PORT;
 
-connectDB();
+const startServer = async () => {
+    try {
+        await connectDB();
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error("MongoDB connection failed:", error.message);
+        process.exitCode = 1;
+    }
+};
+
+startServer();
