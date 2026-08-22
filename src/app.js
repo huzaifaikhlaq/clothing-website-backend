@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import router from './routes/index.js';
 
+import connectDB from './config/db.js';
+
 const app = express();
 
 
@@ -9,6 +11,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error("MongoDB connection failed:", error);
+        res.status(503).json({ message: "Database unavailable" });
+    }
+});
 
 // ===Test API running===
 app.get('/', (req, res) => { res.json({ success: true, message: '🚀 API is running...' }) });
