@@ -1,14 +1,27 @@
 import { addToCart, getCart, updateCart, removeCartItem, clearCart } from "./cart.service.js";
 
+const getCartOwner = (req) => {
+    if (req.user?.id) {
+        return {
+            userId: req.user.id,
+            guestId: null
+        };
+    }
+
+    return {
+        userId: null,
+        guestId: req.guestId
+    };
+};
+
 export const addToCartController = async (req, res) => {
     try {
-        const userId = req.user ? req.user.id : req.body.user;
+        const { userId, guestId } = getCartOwner(req);
 
-        if (!userId) return res.status(401).json({ message: "User not authenticated" });
 
         const { product, quantity, size, color } = req.body;
 
-        const cart = await addToCart(userId, product, quantity, size, color);
+        const cart = await addToCart(userId, guestId, product, quantity, size, color);
 
         return res.status(200).json({ message: "Product added to cart successfully", cart });
 
@@ -18,9 +31,9 @@ export const addToCartController = async (req, res) => {
 }
 export const getCartController = async (req, res) => {
     try {
-        const userId = req.user ? req.user.id : req.body.user;
+        const { userId, guestId } = getCartOwner(req);
 
-        const cart = await getCart(userId);
+        const cart = await getCart(userId, guestId);
 
         return res.status(200).json({ message: "Cart fetched successfully", cart });
     } catch (err) {
@@ -30,10 +43,11 @@ export const getCartController = async (req, res) => {
 
 export const updateCartController = async (req, res) => {
     try {
-        const userId = req.user ? req.user.id : req.body.user;
+        const { userId, guestId } = getCartOwner(req);
+
         const { product, quantity, size, color } = req.body;
 
-        const cart = await updateCart(userId, product, quantity, size, color);
+        const cart = await updateCart(userId, guestId, product, quantity, size, color);
 
         return res.status(200).json({ message: "Cart updated successfully", cart });
     } catch (err) {
@@ -44,11 +58,12 @@ export const updateCartController = async (req, res) => {
 
 export const removeCartItemController = async (req, res) => {
     try {
-        const userId = req.user ? req.user.id : req.body.user;
+        const { userId, guestId } = getCartOwner(req);
+
         const { productID } = req.params;
         const { size, color } = req.body;
 
-        const cart = await removeCartItem(userId, productID, size, color);
+        const cart = await removeCartItem(userId, guestId, productID, size, color);
 
         return res.status(200).json({ message: "Item removed from cart successfully", cart });
     } catch (err) {
@@ -58,11 +73,10 @@ export const removeCartItemController = async (req, res) => {
 
 export const clearCartController = async (req, res) => {
     try {
-        const userId = req.user ? req.user.id : req.body.user;
-        if (!userId) {
-            return res.status(401).json({ message: "User not authenticated" });
-        }
-        const cart = await clearCart(userId);
+        const { userId, guestId } = getCartOwner(req);
+
+
+        const cart = await clearCart(userId, guestId);
 
         return res.status(200).json({ message: "Cart cleared successfully", cart });
     } catch (err) {

@@ -11,6 +11,13 @@ const calculateCartTotal = (items) => {
 const getPopulatedCart = async (cartId) => {
     const cart = await Cart.findById(cartId).populate("items.product", "title price salePrice images stock");
 
+    if (!cart) {
+        return {
+            items: [],
+            totalAmount: 0
+        };
+    }
+
     const totalAmount = calculateCartTotal(cart.items);
 
     return {
@@ -19,11 +26,27 @@ const getPopulatedCart = async (cartId) => {
     };
 };
 
-export const addToCart = async (userId, productId, quantity, size, color) => {
-    let cart = await Cart.findOne({ user: userId }).populate("items.product", "title price salePrice images stock");
+const findCart = async ({ userId, guestId }) => {
+    if (userId) {
+        return Cart.findOne({ user: userId });
+    }
+
+    if (guestId) {
+        return Cart.findOne({ guestId });
+    }
+
+    return null;
+};
+
+export const addToCart = async (userId, guestId, productId, quantity, size, color) => {
+    let cart = await findCart({ userId, guestId })
 
     if (!cart) {
-        cart = await Cart.create({ user: userId, items: [] });
+        cart = await Cart.create({
+            user: userId || null,
+            guestId: userId ? null : guestId,
+            items: []
+        });
     }
 
     const existingItem = cart.items.find((item) => item.product._id.toString() === productId && item.size === size && item.color === color);
@@ -40,7 +63,10 @@ export const addToCart = async (userId, productId, quantity, size, color) => {
 };
 
 export const getCart = async (userId) => {
-    const cart = await Cart.findOne({ user: userId }).populate("items.product", "title price salePrice images stock");
+    const cart = await findCart({
+        userId,
+        guestId
+    });
 
     if (!cart) {
         return {
@@ -57,8 +83,8 @@ export const getCart = async (userId) => {
     };
 };
 
-export const updateCart = async (userId, productId, quantity, size, color) => {
-    const cart = await Cart.findOne({ user: userId });
+export const updateCart = async (userId, guestId, productId, quantity, size, color) => {
+    const cart = await findCart({ userId, guestId });
 
     if (!cart) {
         throw new Error("Cart not found");
@@ -77,8 +103,11 @@ export const updateCart = async (userId, productId, quantity, size, color) => {
     return getPopulatedCart(cart._id);
 };
 
-export const removeCartItem = async (userId, productId, size, color) => {
-    const cart = await Cart.findOne({ user: userId });
+export const removeCartItem = async (userId, guestId, productId, size, color) => {
+    const cart = await findCart({
+        userId,
+        guestId
+    });
 
     if (!cart) {
         throw new Error("Cart not found");
@@ -91,13 +120,19 @@ export const removeCartItem = async (userId, productId, size, color) => {
     return getPopulatedCart(cart._id);
 };
 
-export const clearCart = async (userId) => {
-    const cart = await Cart.findOne({ user: userId });
+export const clearCart = async (userId, guestId) => {
+    const cart = await findCart({
+        userId,
+        guestId
+    });
 
     if (!cart) {
-        throw new Error("Cart not found");
+        return {
+            items: [],
+            totalAmount: 0
+        };
     }
-
+    
     cart.items = [];
 
     await cart.save();

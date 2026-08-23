@@ -1,15 +1,22 @@
 import express from 'express';
 import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { guestCartMiddleware } from '../../middlewares/guestCart.middleware.js';
+import { optionalAuthMiddleware } from '../../middlewares/optionalAuth.middleware.js';
 
 import { addToCartController, getCartController, updateCartController, removeCartItemController, clearCartController } from './cart.controller.js';
 import { addCartValidation, updateCartValidation, deleteCartValidation } from './cart.validation.js';
 
 const router = express.Router();
 
-router.post('/', addCartValidation, authMiddleware, addToCartController);
-router.get('/', authMiddleware, getCartController);
-router.patch('/', updateCartValidation, authMiddleware, updateCartController);
-router.delete('/clear', authMiddleware, clearCartController);
-router.delete('/:productID', deleteCartValidation, authMiddleware, removeCartItemController);
+const cartMiddleware = [
+    optionalAuthMiddleware,
+    guestCartMiddleware
+];
+
+router.post('/', addCartValidation, ...cartMiddleware, addToCartController);
+router.get('/', ...cartMiddleware, getCartController);
+router.patch('/', updateCartValidation, ...cartMiddleware, updateCartController);
+router.delete('/clear', guestCartMiddleware, clearCartController);
+router.delete('/:productID', deleteCartValidation, ...cartMiddleware, removeCartItemController);
 
 export default router;
