@@ -49,7 +49,7 @@ export const addToCart = async (userId, guestId, productId, quantity, size, colo
         });
     }
 
-    const existingItem = cart.items.find((item) => item.product._id.toString() === productId && item.size === size && item.color === color);
+    const existingItem = cart.items.find((item) => item.product.toString() === productId && item.size === size && item.color === color);
 
     if (existingItem) {
         existingItem.quantity += quantity;
@@ -62,7 +62,7 @@ export const addToCart = async (userId, guestId, productId, quantity, size, colo
     return getPopulatedCart(cart._id);
 };
 
-export const getCart = async (userId) => {
+export const getCart = async (userId, guestId) => {
     const cart = await findCart({
         userId,
         guestId

@@ -16,7 +16,7 @@ const cartMiddleware = [
 router.post('/', addCartValidation, ...cartMiddleware, addToCartController);
 router.get('/', ...cartMiddleware, getCartController);
 router.patch('/', updateCartValidation, ...cartMiddleware, updateCartController);
-router.delete('/clear', guestCartMiddleware, clearCartController);
+router.delete('/clear', ...cartMiddleware, clearCartController);
 router.delete('/:productID', deleteCartValidation, ...cartMiddleware, removeCartItemController);
 
 export default router;
