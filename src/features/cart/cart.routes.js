@@ -20,6 +20,6 @@ router.delete('/clear', ...cartMiddleware, clearCartController);
 router.delete('/:productID', deleteCartValidation, ...cartMiddleware, removeCartItemController);
 
 // Merge CartGuest
-router.post("/merge", authMiddleware, guestCartMiddleware, mergeGuestCartController)
+router.post("/merge", guestCartMiddleware, authMiddleware, mergeGuestCartController)
 
 export default router;
