@@ -75,12 +75,7 @@ export const getCart = async (userId, guestId) => {
         };
     }
 
-    const totalAmount = calculateCartTotal(cart.items);
-
-    return {
-        ...cart.toObject(),
-        totalAmount
-    };
+    return getPopulatedCart(cart._id);
 };
 
 export const updateCart = async (userId, guestId, productId, quantity, size, color) => {
