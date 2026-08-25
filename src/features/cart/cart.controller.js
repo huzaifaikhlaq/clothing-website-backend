@@ -1,4 +1,4 @@
-import { addToCart, getCart, updateCart, removeCartItem, clearCart } from "./cart.service.js";
+import { addToCart, getCart, updateCart, removeCartItem, clearCart, mergeGuestCart } from "./cart.service.js";
 
 const getCartOwner = (req) => {
     if (req.user?.id) {
@@ -29,6 +29,7 @@ export const addToCartController = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 }
+
 export const getCartController = async (req, res) => {
     try {
         const { userId, guestId } = getCartOwner(req);
@@ -54,7 +55,6 @@ export const updateCartController = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 }
-
 
 export const removeCartItemController = async (req, res) => {
     try {
@@ -83,3 +83,41 @@ export const clearCartController = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 }
+
+// ======== Merge Guest Cart ======
+export const mergeGuestCartController = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const guestId = req.guestId;
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Authentication required"
+            });
+        }
+
+        if (!guestId) {
+            return res.status(200).json({
+                message: "No guest cart found",
+                cart: null
+            });
+        }
+
+        const cart = await mergeGuestCart(
+            userId,
+            guestId
+        );
+
+        return res.status(200).json({
+            message: "Guest cart merged successfully",
+            cart
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(400).json({
+            message: error.message
+        });
+    }
+};

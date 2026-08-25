@@ -1,6 +1,12 @@
 import { randomUUID } from "crypto";
 
 export const guestCartMiddleware = (req, res, next) => {
+
+    if (req.user?.id) {
+        req.guestId = null;
+        return next();
+    }
+
     let guestId = req.cookies?.guestId;
 
     if (!guestId) {

@@ -132,10 +132,67 @@ export const clearCart = async (userId, guestId) => {
             totalAmount: 0
         };
     }
-    
+
     cart.items = [];
 
     await cart.save();
 
     return getPopulatedCart(cart._id);
+};
+
+// ======== Merge Guest Cart ======
+
+export const mergeGuestCart = async (userId, guestId) => {
+    if (!userId || !guestId) {
+        return null;
+    }
+
+    const guestCart = await Cart.findOne({ guestId });
+
+    if (!guestCart || guestCart.items.length === 0) {
+        return null;
+    }
+
+    let userCart = await Cart.findOne({ user: userId });
+
+    if (!userCart) {
+        userCart = await Cart.create({
+            user: userId,
+            guestId: null,
+            items: guestCart.items
+        });
+
+        await Cart.deleteOne({ _id: guestCart._id });
+
+        return getPopulatedCart(userCart._id);
+    }
+
+    for (const guestItem of guestCart.items) {
+
+        const existingItem = userCart.items.find(
+            (item) =>
+                item.product.toString() === guestItem.product.toString() &&
+                item.size === guestItem.size &&
+                item.color === guestItem.color
+        );
+
+        if (existingItem) {
+            existingItem.quantity += guestItem.quantity;
+        } else {
+            userCart.items.push({
+                product: guestItem.product,
+                quantity: guestItem.quantity,
+                size: guestItem.size,
+                color: guestItem.color
+            });
+        }
+    }
+
+    await userCart.save();
+
+    await Cart.deleteOne({
+        _id: guestCart._id
+    });
+
+    return getPopulatedCart(userCart._id);
 };
