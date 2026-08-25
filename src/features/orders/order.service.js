@@ -45,7 +45,10 @@ export const getOrder = async (orderId, userId) => {
 
 
 export const getAllOrders = async () => {
-    return await Order.find().populate('user', 'name email');
+    return await Order.find()
+        .populate("user", "name email")
+        .populate("items.product", "title price salePrice images stock")
+        .sort({ createdAt: -1 });
 };
 
 export const updateOrderStatus = async (orderId, status) => {
