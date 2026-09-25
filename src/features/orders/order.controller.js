@@ -22,7 +22,7 @@ export const createOrderController = async (req, res) => {
 export const getUserOrdersController = async (req, res) => {
     try {
         const orders = await getUserOrders(req.user.id)
-        console.log("👤 USER ROUTE HIT!");
+        // console.log("👤 USER ROUTE HIT!");
 
 
         return res.status(200).json({
@@ -39,7 +39,7 @@ export const getUserOrdersController = async (req, res) => {
 export const getAllOrdersController = async (req, res) => {
     try {
         const orders = await getAllOrders();
-        console.log("🔥 ADMIN ROUTE HIT!");
+        // console.log("🔥 ADMIN ROUTE HIT!");
 
         return res.status(200).json({
             message: "Orders fetched successfully",
