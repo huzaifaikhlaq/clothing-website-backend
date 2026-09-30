@@ -7,8 +7,16 @@ const app = express();
 
 app.set("trust proxy", 1);
 
+const frontendOrigins = (process.env.FRONTEND_URL ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+const localOrigins = process.env.NODE_ENV === "production"
+    ? []
+    : ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8080"];
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [...new Set([...frontendOrigins, ...localOrigins])],
     credentials: true
 }));
 
