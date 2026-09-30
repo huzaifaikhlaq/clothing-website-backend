@@ -12,8 +12,17 @@ import userRoutes from '../features/users/user.routes.js';
 import adminMiddleware from '../middlewares/admin.middleware.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
+import { rateLimit } from '../middlewares/rateLimit.middleware.js';
 
 const router = Router()
+
+const generalRateLimit = rateLimit({
+    limit: 100,
+    windowSeconds: 60,
+    keyPrefix: "rate-limit:api",
+})
+
+router.use(generalRateLimit)
 
 router.use("/auth", authRoutes)
 router.use("/products", productRoutes)

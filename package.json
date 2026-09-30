@@ -21,6 +21,7 @@
   "homepage": "https://github.com/huzaifaikhlaq/e-commerce-website-backend#readme",
   "description": "",
   "dependencies": {
+    "@upstash/redis": "^1.39.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",

@@ -1,4 +1,5 @@
 import Product from "./product.model.js";
+import { deleteCache, deleteCacheByPattern } from "../../utils/cache.js";
 
 const createProduct = async (productData) => {
     const existingProduct = await Product.findOne({ sku: productData.sku });
@@ -11,7 +12,12 @@ const createProduct = async (productData) => {
         productData.salePrice = null;
     }
 
-    return await Product.create(productData);;
+    const product = await Product.create(productData);;
+
+    await deleteCacheByPattern("products:list:*");
+
+    return product;
+
 }
 
 const getProducts = async (filters = {}, options = {}) => {
@@ -76,7 +82,7 @@ const updateProduct = async (id, updateData) => {
             throw new Error("Product with the same SKU already exists");
         }
     }
-    
+
     if (updateData.salePrice === 0 || updateData.salePrice === "") {
         updateData.salePrice = null;
     }
@@ -89,6 +95,16 @@ const updateProduct = async (id, updateData) => {
         throw new Error("Product not found");
     }
 
+    // Delete this product's detail cache
+    await deleteCache([
+        `products:item:/api/products/${id}`,
+    ]);
+
+    // Delete all product list caches
+    await deleteCacheByPattern(
+        "products:list:*"
+    );
+
     return product;
 }
 
@@ -99,8 +115,18 @@ const deleteProduct = async (id) => {
         throw new Error("Product not found");
     }
 
+    // Delete product detail cache
+    await deleteCache([
+        `products:item:/api/products/${id}`,
+    ]);
+
+    // Delete product list caches
+    await deleteCacheByPattern(
+        "products:list:*"
+    );
+
     return product;
-}
+};
 
 
 

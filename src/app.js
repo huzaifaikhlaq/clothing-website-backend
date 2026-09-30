@@ -7,6 +7,8 @@ import connectDB from './config/db.js';
 
 const app = express();
 
+// Vercel/reverse proxy
+app.set("trust proxy", 1);
 
 // ====Middlewares====
 app.use(cors({
