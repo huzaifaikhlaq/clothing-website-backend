@@ -97,7 +97,7 @@ const updateProduct = async (id, updateData) => {
 
     // Delete this product's detail cache
     await deleteCache([
-        `products:item:/api/products/${id}`,
+        `products:item:/${id}`,
     ]);
 
     // Delete all product list caches
@@ -117,7 +117,7 @@ const deleteProduct = async (id) => {
 
     // Delete product detail cache
     await deleteCache([
-        `products:item:/api/products/${id}`,
+        `products:item:/${id}`,
     ]);
 
     // Delete product list caches

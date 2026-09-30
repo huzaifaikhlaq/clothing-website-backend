@@ -11,10 +11,10 @@ const router = express.Router();
 router.post("/", productValidation.createProductValidation, productController.createProduct);
 
 // Get All Products
-router.get("/", cacheResponse({ ttl: 60, keyPrefix: "products:list", }), , productValidation.getProductsValidation, productController.getProducts);
+router.get("/", cacheResponse({ ttl: 60, keyPrefix: "products:list", }) , productValidation.getProductsValidation, productController.getProducts);
 
 // Get Single Product
-router.get("/:id", cacheResponse({ ttl: 300, keyPrefix: "products:item", }), , productValidation.productIdValidation, productController.getProduct);
+router.get("/:id", cacheResponse({ ttl: 300, keyPrefix: "products:item", }) , productValidation.productIdValidation, productController.getProduct);
 
 // Update Product
 router.patch("/:id", productValidation.updateProductValidation, productController.updateProduct);

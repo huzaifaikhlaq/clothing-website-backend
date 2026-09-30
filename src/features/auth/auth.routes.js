@@ -12,7 +12,18 @@ const authRateLimit = rateLimit({
     keyPrefix: "rate-limit:auth",
 });
 
-router.post('/signup', authValidation.signupValidation , authController.signup);
-router.post('/signin', authValidation.signinValidation ,authController.signin);
+router.post(
+    '/signup',
+    authRateLimit,
+    authValidation.signupValidation,
+    authController.signup
+);
+
+router.post(
+    '/signin',
+    authRateLimit,
+    authValidation.signinValidation,
+    authController.signin
+);
 
 export default router;
