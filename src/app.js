@@ -13,7 +13,7 @@ const frontendOrigins = (process.env.FRONTEND_URL ?? "")
     .filter(Boolean);
 const localOrigins = process.env.NODE_ENV === "production"
     ? []
-    : ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8080"];
+    : ["http://localhost:5173", "http://localhost:8080"];
 
 app.use(cors({
     origin: [...new Set([...frontendOrigins, ...localOrigins])],
