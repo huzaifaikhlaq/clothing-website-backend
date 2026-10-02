@@ -22,7 +22,10 @@ export const rateLimit = ({
             pipeline.incr(key);
             pipeline.ttl(key);
 
-            const [count, currentTtl] = await pipeline.exec();
+            const results = await pipeline.exec();
+
+            const count = results[0][1];
+            const currentTtl = results[1][1];
 
             let ttl = currentTtl;
 

@@ -42,12 +42,11 @@ export const cacheResponse = ({
             // =========================
 
             if (cachedData !== null) {
-                res.setHeader(
-                    "X-Cache",
-                    "HIT"
-                );
+                res.setHeader("X-Cache", "HIT");
 
-                return res.status(200).json(cachedData);
+                return res.status(200).json(
+                    JSON.parse(cachedData)
+                );
             }
 
             // =========================
@@ -61,15 +60,12 @@ export const cacheResponse = ({
 
             const originalJson = res.json.bind(res);
 
-
             res.json = async (body) => {
                 try {
                     await redis.set(
                         cacheKey,
-                        body,
-                        {
-                            ex: ttl,
-                        }
+                        JSON.stringify(body),
+                        "EX", ttl
                     );
                 } catch (error) {
                     console.error(

@@ -10,18 +10,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/huzaifaikhlaq/e-commerce-website-backend.git"
+    "url": "git+https://github.com/huzaifaikhlaq/Voire-website-backend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/huzaifaikhlaq/e-commerce-website-backend/issues"
+    "url": "https://github.com/huzaifaikhlaq/Voire-website-backend/issues"
   },
-  "homepage": "https://github.com/huzaifaikhlaq/e-commerce-website-backend#readme",
+  "homepage": "https://github.com/huzaifaikhlaq/Voire-website-backend#readme",
   "description": "",
   "dependencies": {
-    "@upstash/redis": "^1.39.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",
@@ -29,6 +28,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.7.4",
     "multer": "^2.2.0",
