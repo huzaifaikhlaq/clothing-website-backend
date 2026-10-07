@@ -1,8 +1,10 @@
 import Redis from "ioredis";
 
-const redis = new Redis(
-    process.env.REDIS_URL || "redis://localhost:6379"
-);
+if (!process.env.REDIS_URL) {
+    throw new Error("REDIS_URL is not configured");
+}
+
+const redis = new Redis(process.env.REDIS_URL);
 
 redis.on("connect", () => {
     console.log("Redis connected");
