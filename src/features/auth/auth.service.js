@@ -120,27 +120,22 @@ const googleSignin = async (credential) => {
   let user = await User.findOne({ googleId });
 
   if (!user) {
-    // Link Google to an existing account with the same verified email.
-    user = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (user) {
-      user.googleId = googleId;
-
-      if (picture && !user.profilePicture) {
-        user.profilePicture = picture;
-      }
-
-      await user.save();
-    } else {
-      // Create a new Google account.
-      user = await User.create({
-        name: name || email.split("@")[0],
-        email,
-        googleId,
-        profilePicture: picture,
-        role: "user",
-      });
+    if (existingUser) {
+      throw new Error(
+        "This methode is not vaild for existing email. Please sign in with your password."
+      );
     }
+
+    // Create a separate Google account; do not link it to an email/password account.
+    user = await User.create({
+      name: name || email.split("@")[0],
+      email,
+      googleId,
+      profilePicture: picture,
+      role: "user",
+    });
   }
 
   return {
