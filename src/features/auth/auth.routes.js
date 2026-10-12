@@ -1,8 +1,8 @@
-import express from 'express';
-import authController from './auth.controller.js';
-import authValidation from './auth.validation.js';
 
-import { rateLimit } from '../../middlewares/rateLimit.middleware.js';
+import express from "express";
+import authController from "./auth.controller.js";
+import authValidation from "./auth.validation.js";
+import { rateLimit } from "../../middlewares/rateLimit.middleware.js";
 
 const router = express.Router();
 
@@ -13,17 +13,23 @@ const authRateLimit = rateLimit({
 });
 
 router.post(
-    '/signup',
+    "/signup",
     authRateLimit,
     authValidation.signupValidation,
     authController.signup
 );
 
 router.post(
-    '/signin',
+    "/signin",
     authRateLimit,
     authValidation.signinValidation,
     authController.signin
+);
+
+router.post(
+    "/google",
+    authRateLimit,
+    authController.googleSignin
 );
 
 export default router;

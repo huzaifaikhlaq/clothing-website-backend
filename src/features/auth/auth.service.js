@@ -1,52 +1,73 @@
+
 import User from "./auth.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client } from "google-auth-library";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// === signup ===
-const signup = async (userData) => {
+const createToken = (user) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+  }
 
-  // Check email
-  const existingUser = await User.findOne({ email: userData.email });
+  return jwt.sign(
+    {
+      email: user.email,
+      id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
+const removePassword = (user) => {
+  const userObject = user.toObject();
+  delete userObject.password;
+  return userObject;
+};
+
+// Email/password signup
+const signup = async (userData) => {
+  const existingUser = await User.findOne({
+    email: userData.email,
+  });
 
   if (existingUser) {
     throw new Error("Email already exists");
   }
 
-  // Hash password
-  const hasedPassword = await bcrypt.hash(userData.password, 10);
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-  // Create user
   const user = await User.create({
     ...userData,
-    password: hasedPassword
-  })
+    password: hashedPassword,
+  });
 
-  // create token
-  const token = jwt.sign(
-    { email: user.email, id: user._id, role: user.role },
-    process.env.JWT_SECRET,
-  );
-
-  const userWithoutPassword = user.toObject();
-  delete userWithoutPassword.password;
-
-  return { user: userWithoutPassword, token };
+  return {
+    user: removePassword(user),
+    token: createToken(user),
+  };
 };
 
-// ==== signin ===
+// Email/password signin
 const signin = async (userData) => {
-
-  // check user exists
-  const user = await User.findOne({ email: userData.email });
+  const user = await User.findOne({
+    email: userData.email,
+  });
 
   if (!user) {
     throw new Error("Invalid email or password");
   }
 
-  // Compare password
+  // Google-only accounts do not have a password hash.
+  if (!user.password) {
+    throw new Error(
+      "This account uses Google sign-in. Continue with Google."
+    );
+  }
+
   const isPasswordCorrect = await bcrypt.compare(
     userData.password,
     user.password
@@ -56,27 +77,24 @@ const signin = async (userData) => {
     throw new Error("Invalid email or password");
   }
 
-  // genrate JWT token
-  const token = jwt.sign(
-    { email: user.email, id: user._id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" },
-  );
-
-  const userWithoutPassword = user.toObject();
-  delete userWithoutPassword.password;
-
-  return { user: userWithoutPassword, token };
-
+  return {
+    user: removePassword(user),
+    token: createToken(user),
+  };
 };
 
-//  === Google Authentication ====
+// Google signin/signup
 const googleSignin = async (credential) => {
   if (!credential) {
     throw new Error("Google credential is required");
   }
 
-  const ticket = await googleClient.verifyIdToken({
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    throw new Error("GOOGLE_CLIENT_ID is not configured");
+  }
+
+  // Verify the ID token using Google's servers.
+  const ticket = await client.verifyIdToken({
     idToken: credential,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
@@ -95,18 +113,15 @@ const googleSignin = async (credential) => {
     picture,
   } = payload;
 
-  if (!email || !emailVerified) {
+  if (!googleId || !email || !emailVerified) {
     throw new Error("Google email could not be verified");
   }
 
-  let user = await User.findOne({
-    googleId
-  });
+  let user = await User.findOne({ googleId });
 
   if (!user) {
-    user = await User.findOne({
-      email
-    });
+    // Link Google to an existing account with the same verified email.
+    user = await User.findOne({ email });
 
     if (user) {
       user.googleId = googleId;
@@ -117,6 +132,7 @@ const googleSignin = async (credential) => {
 
       await user.save();
     } else {
+      // Create a new Google account.
       user = await User.create({
         name: name || email.split("@")[0],
         email,
@@ -127,30 +143,14 @@ const googleSignin = async (credential) => {
     }
   }
 
-  const token = jwt.sign(
-    {
-      email: user.email,
-      id: user._id,
-      role: user.role,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "7d",
-    }
-  );
-
-  const userWithoutPassword = user.toObject();
-
-  delete userWithoutPassword.password;
-
   return {
-    user: userWithoutPassword,
-    token,
+    user: removePassword(user),
+    token: createToken(user),
   };
 };
 
 export default {
   signup,
   signin,
-  googleSignin
+  googleSignin,
 };
